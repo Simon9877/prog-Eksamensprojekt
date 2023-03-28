@@ -25,7 +25,8 @@ public class RegisterForm extends Form{
         getDataBase().addUserToDatabase(newUser);
         WelcomePage welPage = new WelcomePage(newUser);
         welPage.outputMessage();
-        welPage.logoutMessage();
+        welPage.chat();
+        //welPage.logoutMessage();
 
     }
 
