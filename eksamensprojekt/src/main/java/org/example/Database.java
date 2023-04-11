@@ -6,9 +6,9 @@ public class Database {
     private static ArrayList<User> dataBase = new ArrayList<User>();
 
     static {
-        dataBase.add(new User("Tom", "12/02/09", "t@gmail.com", "pass"));
-        dataBase.add(new User("Bryan", "01/01/01", "b@gmail.com", "password"));
-        dataBase.add(new User("Tarence", "15/22/20", "tt@gmail.com", "passwordismypassword"));
+        dataBase.add(new User("Tom", "t@gmail.com", "pass"));
+        dataBase.add(new User("Bryan", "b@gmail.com", "password"));
+        dataBase.add(new User("Tarence", "tt@gmail.com", "passwordismypassword"));
     }
 
 
