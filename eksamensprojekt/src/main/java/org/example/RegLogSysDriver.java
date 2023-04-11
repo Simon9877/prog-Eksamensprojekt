@@ -1,10 +1,35 @@
 package org.example;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.*;
 
 public class RegLogSysDriver {
     
+    /**
+     * Action listener for text field
+     */
+    private final class ActionListenerImplementation implements ActionListener {
+        //private Scanner input = new Scanner(System.in);
+                
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Get the text from the JTextField
+            String inputText = textField.getText();
+      
+            // add text to text area
+            textArea.append(inputText + "\n");
+            System.out.println(inputText);
+            
+            // Clear the JTextField
+            textField.setText("");
+            textField.requestFocus();
+        }
+    }
+
+
     JTextField textField; 
     JTextArea textArea;
     JScrollPane scrollPane;
@@ -48,14 +73,21 @@ public class RegLogSysDriver {
         c2.fill = GridBagConstraints.HORIZONTAL;                  
         panel.add(textField, c2);
 
-        // add panel to
+        // add panel to frame
         frame.add(panel);
 
+        // add some initial text
         textArea.setText("Added text will shown here.");
         textField.setText("Add text here...");
 
-        frame.setVisible(true);
+        // create listener
+        ActionListener textFieldListener = new ActionListenerImplementation();
+        
+        // Add the ActionListener to the JTextField
+        textField.addActionListener(textFieldListener);        
 
+        // show frame
+        frame.setVisible(true);
 }        
 
 
