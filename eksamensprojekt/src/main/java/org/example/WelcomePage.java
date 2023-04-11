@@ -37,7 +37,8 @@ public class WelcomePage {
                 clientSocket = new Socket("127.0.0.1", 5000);
                 out = new PrintWriter(clientSocket.getOutputStream());                
                 in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                
+
+                // create sender thread
                 Thread sender = new Thread(new Runnable() {
                     String msg;
 
@@ -52,6 +53,7 @@ public class WelcomePage {
                 });
                 sender.start();
 
+                // create receiver thread                
                 Thread receiver = new Thread(new Runnable() {
                     String msg;
                     Scanner socketInput = new Scanner(in);
