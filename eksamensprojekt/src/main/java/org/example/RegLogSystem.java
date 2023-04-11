@@ -5,7 +5,7 @@ public class RegLogSystem {
     //Instance variables
     Scanner input = new Scanner(System.in);
     String regOrLogInput;
-    String name, dateOfBirth, email, password;
+    String name, email, password;
 
     //Methods
     public void run() {
@@ -24,13 +24,11 @@ public class RegLogSystem {
             }else if(regOrLogInput.contentEquals("r")) {
                 System.out.println("Enter name:\n");
                 name = input.nextLine();
-                System.out.println("Enter date of birth e.g. (03/04/2000):\n");
-                dateOfBirth = input.nextLine();
                 System.out.println("Enter email:\n");
                 email = input.nextLine();
                 System.out.println("Enter password:\n");
                 password = input.nextLine();
-                RegisterForm rForm = new RegisterForm(name, dateOfBirth, email, password);
+                RegisterForm rForm = new RegisterForm(name, email, password);
                 rForm.executeForm();
             }
             System.out.println("Do you wish to shutdown the system, (y)es or (n)o?");
