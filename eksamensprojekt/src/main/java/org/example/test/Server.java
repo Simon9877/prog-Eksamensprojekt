@@ -6,62 +6,93 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Server {
     public static void main(String[] args){
         final ServerSocket serverSocket ;
-        final Socket clientSocket ;
-        final BufferedReader in;
-        final PrintWriter out;
-        final Scanner sc=new Scanner(System.in);
+        final List<PrintWriter> clientOuts = new ArrayList<>();
+        PrintWriter serverOut = null;
 
         try {
             serverSocket = new ServerSocket(5000);
-            clientSocket = serverSocket.accept();
-            out = new PrintWriter(clientSocket.getOutputStream());
-            in = new BufferedReader (new InputStreamReader(clientSocket.getInputStream()));
+            System.out.println("Server is running and listening on port 5000...");
 
-            Thread sender= new Thread(new Runnable() {
-                String msg; //variable that will contains the data writter by the user
-                @Override   // annotation to override the run method
-                public void run() {
-                    while(true){
-                        msg = sc.nextLine(); //reads data from user's keybord
-                        out.println(msg);    // write data stored in msg in the clientSocket
-                        out.flush();   // forces the sending of the data
-                    }
-                }
-            });
-            sender.start();
-
-            Thread receive= new Thread(new Runnable() {
-                String msg ;
+            // create a new thread to handle messages from the server console
+            Thread consoleThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    try {
-                        msg = in.readLine();
-                        //tant que le client est connecté
-                        while(msg!=null){
-                            System.out.println("Client : "+msg);
-                            msg = in.readLine();
+                    Scanner scanner = new Scanner(System.in);
+                    while (true) {
+                        String msg = scanner.nextLine();
+                        synchronized (clientOuts) {
+                            for (PrintWriter clientOut : clientOuts) {
+                                clientOut.println("Server: " + msg);
+                                clientOut.flush();
+                            }
                         }
-
-                        System.out.println("Client déconecté");
-
-                        out.close();
-                        clientSocket.close();
-                        serverSocket.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     }
                 }
             });
-            receive.start();
+            consoleThread.start();
+
+            // infinite loop to keep accepting new client connections
+            while (true) {
+                final Socket clientSocket = serverSocket.accept();
+                System.out.println("New client connected: " + clientSocket);
+
+                // create a new thread to handle this client connection
+                Thread clientThread = new Thread(new Runnable() {
+                    BufferedReader in;
+                    PrintWriter out;
+
+                    @Override
+                    public void run() {
+                        try {
+                            out = new PrintWriter(clientSocket.getOutputStream(), true);
+                            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+                            // add the client's PrintWriter to the list of clientOuts
+                            synchronized (clientOuts) {
+                                clientOuts.add(out);
+                            }
+
+                            // read messages from the client
+                            String msg;
+                            while ((msg = in.readLine()) != null) {
+                                System.out.println("Client " + clientSocket + ": " + msg);
+
+                                // send the message to all connected clients (including the server console)
+                                synchronized (clientOuts) {
+                                    for (PrintWriter clientOut : clientOuts) {
+                                        clientOut.println("Client " + clientSocket + ": " + msg);
+                                        clientOut.flush();
+                                    }
+                                }
+                            }
+
+                            // the client has disconnected
+                            System.out.println("Client disconnected: " + clientSocket);
+
+                            // remove the client's PrintWriter from the list of clientOuts
+                            synchronized (clientOuts) {
+                                clientOuts.remove(out);
+                            }
+
+                            out.close();
+                            in.close();
+                            clientSocket.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                clientThread.start();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 }
