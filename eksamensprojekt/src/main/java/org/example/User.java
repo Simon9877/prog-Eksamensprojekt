@@ -1,10 +1,13 @@
 package org.example;
 
 public class User {
+    private int id;
     private String name;
     private String email;
     private String password;
 
+    public User() {
+    }
 
     public User(String name, String email, String password) {
         this.name = name;
@@ -12,15 +15,11 @@ public class User {
         this.password = password;
     }
 
+    public int getId() { return id; }
 
+    public void setId(int id) { this.id = id; }
 
-    public User() {
-
-    }
-
-
-
-    public String getEmail() {
+        public String getEmail() {
         return this.email;
     }
 

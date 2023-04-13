@@ -151,7 +151,7 @@ public class WelcomePage {
                             while (true) {
                                 msg = socketInput.nextLine();
                                 //System.out.println("Server : " + msg);
-                                textArea.append("Server: " + msg + "\n");
+                                textArea.append(msg + "\n");
 
                             }
                         } catch (Exception e) {
