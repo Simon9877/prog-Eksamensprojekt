@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Server {
-    public static void main(String[] args){
-        final ServerSocket serverSocket ;
+    public static void main(String[] args) {
+        final ServerSocket serverSocket;
         final List<PrintWriter> clientOuts = new ArrayList<>();
         PrintWriter serverOut = null;
 
@@ -61,20 +61,28 @@ public class Server {
 
                             // read messages from the client
                             String msg;
-                            while ((msg = in.readLine()) != null) {
-                                System.out.println("Client " + clientSocket + ": " + msg);
-
-                                // send the message to all connected clients (including the server console)
-                                synchronized (clientOuts) {
-                                    for (PrintWriter clientOut : clientOuts) {
-                                        clientOut.println("Client " + clientSocket + ": " + msg);
-                                        clientOut.flush();
+                            while (true) {
+                                try {
+                                    msg = in.readLine();
+                                    if (msg == null) {
+                                        // the client has disconnected
+                                        break;
                                     }
+
+                                    System.out.println("Client " + clientSocket + ": " + msg);
+
+                                    // send the message to all connected clients (including the server console)
+                                    synchronized (clientOuts) {
+                                        for (PrintWriter clientOut : clientOuts) {
+                                            clientOut.println("Client " + clientSocket + ": " + msg);
+                                            clientOut.flush();
+                                        }
+                                    }
+                                } catch (IOException e) {
+                                    // the client has disconnected
+                                    break;
                                 }
                             }
-
-                            // the client has disconnected
-                            System.out.println("Client disconnected: " + clientSocket);
 
                             // remove the client's PrintWriter from the list of clientOuts
                             synchronized (clientOuts) {
@@ -84,6 +92,7 @@ public class Server {
                             out.close();
                             in.close();
                             clientSocket.close();
+                            System.out.println("Client disconnected: " + clientSocket);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

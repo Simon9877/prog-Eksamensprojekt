@@ -150,13 +150,11 @@ public class WelcomePage {
                         try {
                             while (true) {
                                 msg = socketInput.nextLine();
-                                //System.out.println("Server : " + msg);
                                 textArea.append(msg + "\n");
-
+                                textArea.setCaretPosition(textArea.getDocument().getLength()); // scroll to bottom
                             }
                         } catch (Exception e) {
-                            //System.out.println("Server out of service");
-                            textArea.append("Server out of service");
+                            textArea.append("Server out of service\n");
                             out.close();
                             try {
                                 clientSocket.close();
