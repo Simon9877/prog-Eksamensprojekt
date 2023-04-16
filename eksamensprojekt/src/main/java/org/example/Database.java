@@ -1,6 +1,6 @@
-package org.example;
+// Denne klasse håndterer alt vedrørende databaseoperationer.
 
-import com.mysql.cj.jdbc.Driver;
+package org.example;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,16 +8,20 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 
 public class Database {
+    // Angiver databaseforbindelsesparametre.
     private final static String DATABASE_URL = "jdbc:mysql://localhost:3306/chat?useSSL=false&allowPublicKeyRetrieval=true";
     private final static String DATABASE_USER = "chat";
     private final static String DATABASE_PASSWORD = "chat";
+    // Angiver SQL-forespørgsler til at finde brugerinformationer og indsætte nye brugere.
     private final static String SELECT_USER_SQL = "SELECT * FROM users WHERE email=? AND password=?";
+    // Angiver SQL-forespørgsel for at indsætte bruger.
     private final static String INSERT_USER_SQL = "INSERT INTO users(name, email, password) VALUES (?, ?, ?)";
+    // Angiver SQL-forespørgsel for at oprette brugertabel.
     private final static String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS users (id INT NOT NULL AUTO_INCREMENT, name VARCHAR(255), email VARCHAR(255), password VARCHAR(255), PRIMARY KEY (id))";
 
+    // Opretter forbindelse til databasen og opretter brugertabel, hvis den ikke allerede eksisterer.
     public Database() {
         try (Connection conn = DriverManager.getConnection(DATABASE_URL, DATABASE_USER, DATABASE_PASSWORD);
              Statement stmt = conn.createStatement()) {
@@ -27,6 +31,7 @@ public class Database {
         }
     }
 
+    // Tjekker, om en bruger er registreret i databasen med den angivne email og password.
     public boolean isUserRegistered(String email, String password) {
         boolean returnVal = false;
         try (Connection conn = DriverManager.getConnection(DATABASE_URL, DATABASE_USER, DATABASE_PASSWORD);
@@ -44,6 +49,7 @@ public class Database {
         return returnVal;
     }
 
+    // Henter en bruger fra databasen med den angivne email og password.
     public User getUser(String email, String password) {
         User returnVal = null;
         try (Connection conn = DriverManager.getConnection(DATABASE_URL, DATABASE_USER, DATABASE_PASSWORD);
@@ -64,6 +70,7 @@ public class Database {
         return returnVal;
     }
 
+    // Tilføjer en ny bruger til databasen med de angivne oplysninger.
     public void addUserToDatabase(User newUser) {
         try (Connection conn = DriverManager.getConnection(DATABASE_URL, DATABASE_USER, DATABASE_PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(INSERT_USER_SQL)) {
