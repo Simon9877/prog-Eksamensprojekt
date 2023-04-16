@@ -3,10 +3,11 @@
 package org.example;
 
 public abstract class Form {
-    // Deklarerer private instansvariabler til brugerens email og password samt en instans af Database-klassen.
+    // sætter private variabler til brugerens email og password samt en instans af Database-klassen.
     private String emailEntry;
     private String passwordEntry;
     private Database dataBase;
+
     // Konstruktøren til formularobjektet, som initialiserer databasen og de private instansvariabler til brugerens email og password.
     protected Form(String emailEntry, String passwordEntry) {
         this.dataBase = new Database(); // Begge formularer vil få brug for adgang til den samme database.
